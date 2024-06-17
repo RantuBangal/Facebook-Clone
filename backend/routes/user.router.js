@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { UserModel } = require('../models/user.model');
+const { BlackListTokenModel } = require('../models/blacklist.model');
 require('dotenv').config();
 
 const userRouter = express.Router() ;
@@ -69,7 +70,7 @@ userRouter.get("/:id", async (req, res) => {
 		if (!user) {
 			return res.status(404).json({ msg: "User not found" });
 		}
-		res.status(200).json(user);
+		res.status(200).json({msg: "User found",user});
 	} catch (err) {
 		console.error(err);
 		res.status(500).json({ msg: "Internal server error", err });
@@ -79,18 +80,18 @@ userRouter.get("/:id", async (req, res) => {
 
 
 // logout route
-userRouter.get("/logout", (req, res) => {
-	const token = req.headers.authorization;
+userRouter.post("/logout", async(req,res) => {
+	const token = req.headers.authorization
 	try {
-		blacklist.push(token)
-		res.status(200).json({ msg: "You have been logged out!" })
+		const tokenToBeBlackListed = new BlackListTokenModel({
+			token
+		})
+		await tokenToBeBlackListed.save()
+		res.status(200).json({msg:"Logout Successful!"})
+	} catch(err) {
+		res.status(400).json({err})
 	}
-	catch (err) {
-		res.status(400).json({ msg: "Error while logging out!" , err })
-	}
-
-});
-
+})
 
 
 
