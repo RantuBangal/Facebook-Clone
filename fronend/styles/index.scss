@@ -1,0 +1,13 @@
+
+// Define a variable for button colors
+$primary-color: #3498db;
+$button-padding: 10px 20px;
+
+// Styles for the button
+.container {
+    .button {
+        padding: $button-padding;
+        background-color:red;
+    }
+}
+
